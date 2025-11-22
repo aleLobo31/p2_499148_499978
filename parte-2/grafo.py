@@ -18,8 +18,11 @@ class Graph:
             match = re.match(regex, lines[i])
             if(match):
                 # Update adjacency matrix
-                self._adjacency_list[int(match[1])].append((match[2], match[3]))
+                self._adjacency_list[int(match[1])].append((int(match[3]), int(match[2])))
     
+    def get_adjacent_nodes(self, node: int) -> list[tuple]:
+        return self._adjacency_list[node]
+
     # Attributes Getters
     @property
     def n_vertices(self):
