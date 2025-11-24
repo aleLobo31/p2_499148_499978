@@ -131,7 +131,7 @@ def main() -> int:
         print(f"{len(sols)} soluciones encontradas")
 
     # ====================================
-    # Escribimoms la solución en la salida
+    # Escribimos la solución en la salida
     # ====================================
     try:
         with open(output_file, 'a') as of:
