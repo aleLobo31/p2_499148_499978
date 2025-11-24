@@ -125,10 +125,18 @@ def main() -> int:
     # ======================
     # Computamos la solución
     # ======================
-    sol = problem.getSolution()
     sols = problem.getSolutions()
     if sols:
         print(f"{len(sols)} soluciones encontradas")
+    else:
+        print("0 soluciones encontradas")
+
+        try:
+            with open(output_file, 'a') as of:
+                of.write("No se ha encontrado solución\n")
+        except Exception as e:
+            print(f"Error: No se ha podido escribir la solución correctamente en el fichero de salida")
+        return 0
 
     # ====================================
     # Escribimos la solución en la salida
@@ -142,7 +150,7 @@ def main() -> int:
             for row in range(i):
                 for col in range(j):
                     key = f"c{row}{col}"
-                    if sol[key]:
+                    if sols[0][key]:
                         of.write("| O ")
                     else:
                         of.write("| X ")
