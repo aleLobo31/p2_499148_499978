@@ -20,7 +20,7 @@ class SearchAlgorithm:
         self._generations = 0
         self._expansions = 0
 
-    def solve(self, init_node: int, final_node: int) -> bool:
+    def solve_dijkstra(self, init_node: int, final_node: int) -> bool:
         # Reset Data Stuctures
         self._abierta.reset()
         self._cerrada.reset()
@@ -71,7 +71,57 @@ class SearchAlgorithm:
                     self._generations += 1
         
         return False
+
+    def solve_astar(self, init_node: int, final_node: int) -> bool:
+        self._abierta.reset()
+        self._cerrada.reset()
+        self._path = []
+        parents = {}
         
+        # Necesitamos g_score separado de la prioridad del heap
+        g_score = {init_node: 0}
+        
+        # Calcular heurística inicial
+        h_start = self._graph.get_euclid_projected(init_node, final_node)
+        
+        # Añadimos a abierta con f(n)
+        self._abierta.add(h_start, init_node)
+
+        while not self._abierta.is_empty():
+            # Lo que sacamos es f(n), NO el coste real
+            current_f, current_node = self._abierta.get_best()
+
+            if current_node == final_node:
+                self.reconstruct_path(parents, final_node)
+                print(f"Solución óptima encontrada con coste {g_score[current_node]}")
+                return True
+
+            if self._cerrada.contains(current_node):
+                continue
+            self._cerrada.add(current_node)
+            
+            # Recuperamos el coste real (g) limpio para hacer las sumas
+            current_g = g_score[current_node]
+            self._expansions += 1
+
+            # Expandir vecinos
+            for weight, neighbour_id in self._graph.get_adjacent_nodes(current_node):
+                tentative_g = current_g + weight
+
+                # Si encontramos un camino mejor...
+                if tentative_g < g_score.get(neighbour_id, float('inf')):
+                    g_score[neighbour_id] = tentative_g
+                    parents[neighbour_id] = (weight, current_node)
+                    
+                    # EN A*: Calculamos heurística y sumamos
+                    h_cost = self._graph.get_euclid_projected(neighbour_id, final_node)
+                    f_cost = tentative_g + h_cost
+
+                    if not self._cerrada.contains(neighbour_id):
+                        self._abierta.add(f_cost, neighbour_id)
+                        self._generations += 1
+        return False
+
     def reconstruct_path(self, parents: dict, final_node: int) -> None:
         # Create empty path
         self._path = []

@@ -11,6 +11,8 @@ def main() -> int:
     
     graph_path = sys.argv[3] + ".gr"
     regex_pattern = re.compile(r'^p\s+sp\s+(\d+)\s+(\d+)$')
+    n_vertices = 0
+    n_edges = 0
     try:
         # Open Graph file
         with open(graph_path, "r") as g:
@@ -18,13 +20,26 @@ def main() -> int:
             lines = g.readlines()
             # Extract number of vertices and edges
             match = re.match(regex_pattern, lines[4])
-            # Create Graph
-            map_graph = Graph(int(match[1]), int(match[2]), lines)
-            
+            n_vertices = int(match[1])
+            n_edges = int(match[2])
+
     except FileNotFoundError:
         print(f"El fichero {graph_path} no existe o la ruta es incorrecta.")
         return -1
     
+    map_graph = Graph(n_vertices, n_edges, lines)
+    coord_path = sys.argv[3] + ".co"
+    
+    try:
+        with open(coord_path, "r") as c:
+            lines_coord = c.readlines()
+            # Le pasamos las líneas crudas al grafo para que él las procese
+            map_graph.load_coordinates(lines_coord)
+
+    except FileNotFoundError:
+        print("Error: No se encontraron los ficheros .gr o .co")
+        sys.exit(1)
+
     print(f"# vertices: {map_graph.n_vertices}")
     print(f"# arcos   : {map_graph.n_edges}")
     print("\n")
@@ -34,7 +49,7 @@ def main() -> int:
 
     # Compute the solution if exists
     start_time = time.perf_counter()
-    engine.solve(int(sys.argv[1]), int(sys.argv[2]))
+    engine.solve_astar(int(sys.argv[1]), int(sys.argv[2]))
     end_time = time.perf_counter()
     diff = end_time - start_time
 
