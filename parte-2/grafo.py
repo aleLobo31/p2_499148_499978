@@ -52,7 +52,7 @@ class Graph:
         dx = (lon2 - lon1) * 111320 * math.cos(math.radians((lat1 + lat2) / 2))
         dy = (lat2 - lat1) * 111320
 
-        return math.sqrt(dx * dx + dy * dy) * 2
+        return math.sqrt(dx * dx + dy * dy)
 
     def get_adjacent_nodes(self, node: int) -> list[tuple]:
         return self._adjacency_list[node]
