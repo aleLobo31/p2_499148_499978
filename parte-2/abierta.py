@@ -1,5 +1,3 @@
-import heapq
-
 class Abierta:
     '''
     Lista Abierta basado en Árbol Binario donde la RAÍZ siempre tiene al valor MÁS PEQUEÑO
