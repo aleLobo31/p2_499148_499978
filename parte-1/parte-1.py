@@ -24,11 +24,11 @@ def main() -> int:
                 j = 0
                 for elem in line.strip():
                     if(elem == "."):
-                        problem.addVariable(f'c{i}{j}', [0, 1])
+                        problem.addVariable(f'c{i}_{j}', [0, 1])
                     elif(elem == "X"):
-                        problem.addVariable(f'c{i}{j}', [0])
+                        problem.addVariable(f'c{i}_{j}', [0])
                     elif(elem == "O"):
-                        problem.addVariable(f'c{i}{j}', [1])
+                        problem.addVariable(f'c{i}_{j}', [1])
                     else:
                         print(f"Error: El elemento {elem} no está reconocido.")
                         return -1
@@ -53,7 +53,7 @@ def main() -> int:
 
             for row in range(i):
                 for col in range(j):
-                    key = f"c{row}{col}"
+                    key = f"c{row}_{col}"
                     if(len(scenario[key]) == 1):
                         if(scenario[key][0]):
                             of.write("| O ")
@@ -81,14 +81,14 @@ def main() -> int:
     # ===========================
     # [1] Todas las filas deben tener el mismo número de fichas negras y blancas
     for row in range(i):
-        row_variables = [f'c{row}{col}' for col in range(j)]
+        row_variables = [f'c{row}_{col}' for col in range(j)]
         problem.addConstraint(
             lambda *values: sum(values) == i/2,
             row_variables
         )
     # [2] Todas las columnas deben tener el mismo número de fichas negras y blancas
     for col in range(j):
-        col_variables = [f'c{row}{col}' for row in range(j)]
+        col_variables = [f'c{row}_{col}' for row in range(i)]
         problem.addConstraint(
             lambda *values: sum(values) == i/2,
             col_variables
@@ -99,7 +99,7 @@ def main() -> int:
         soporte = 0
         while(soporte <= j - 3):
             # Extraemos el grupo de 3 variables consecutivas
-            col_variables = [f'c{row}{col}' for col in range(soporte, soporte+3)]
+            col_variables = [f'c{row}_{col}' for col in range(soporte, soporte+3)]
             # Añadimos la restricción la suma del grupo no puede ser ni 0 (3 'X') ni 3 (3 'O')
             problem.addConstraint(
                 lambda *values: sum(values) != 0 and sum(values) != 3,
@@ -113,7 +113,7 @@ def main() -> int:
         soporte = 0
         while(soporte <= i - 3):
             # Extraemos el grupo de 3 variables consecutivas
-            row_variables = [f'c{row}{col}' for row in range(soporte, soporte+3)]
+            row_variables = [f'c{row}_{col}' for row in range(soporte, soporte+3)]
             # Añadimos la restricción la suma del grupo no puede ser ni 0 (3 'X') ni 3 (3 'O')
             problem.addConstraint(
                 lambda *values: sum(values) != 0 and sum(values) != 3,
@@ -149,7 +149,7 @@ def main() -> int:
 
             for row in range(i):
                 for col in range(j):
-                    key = f"c{row}{col}"
+                    key = f"c{row}_{col}"
                     if sols[0][key]:
                         of.write("| O ")
                     else:
